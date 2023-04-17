@@ -1,4 +1,6 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: MIT
+// Reference: https://etherscan.io/address/0x06012c8cf97bead5deae237070f9587f8e7a266d#code
+
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";

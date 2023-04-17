@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: MIT
+// Code source : https://etherscan.io/address/0xa10740ff9ff6852eac84cdcff9184e1d6d27c057#code
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable2Step.sol";
