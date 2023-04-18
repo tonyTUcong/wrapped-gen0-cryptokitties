@@ -11,7 +11,7 @@ contract Gen0OnChainTokenURI is ITokenURI {
     string internal constant TABLE_ENCODE =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/-:# ";
 
-    string[] private _cooldownNames = ["Fast","Swift","Wwift","Snappy","Snappy","Brisk","Brisk","Plodding","Plodding","Slow","Slow","Sluggish","Sluggish","Catatonic"];
+    string[] private  _cooldownNames = ["Fast","Swift","Swift","Snappy","Snappy","Brisk","Brisk","Plodding","Plodding","Slow","Slow","Sluggish","Sluggish","Catatonic"];
 
     IKittyCore kittyCore;
     constructor(address kittyCore_)
@@ -21,10 +21,10 @@ contract Gen0OnChainTokenURI is ITokenURI {
 
 
     function tokenURI(uint256 tokenId) external view returns (string memory uri_) {
-        (,,uint256 cooldownIndex,uint256 nextActionAt,,uint256 birthTime,,,uint256 generation,) = kittyCore.getKitty(tokenId);
+        (,,uint256 cooldownIndex,,,uint256 birthTime,,,uint256 generation,) = kittyCore.getKitty(tokenId);
 
         require(generation == 0, "generation is not zero");
-        string memory verginity = nextActionAt == 0 ?  "Vergin" : "Non-vergin";
+        string memory verginity = cooldownIndex == 0 ?  "Vergin" : "Non-vergin";
         string memory fetureAndIdPrefix = '';
         if(tokenId <= 100) {
             fetureAndIdPrefix = '{"trait_type":"Feature","value":"Founder"},{"trait_type":"ID","value":';
