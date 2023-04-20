@@ -54,13 +54,15 @@ contract KittyCoreTest is ERC721, Ownable2Step {
     }
 
     ITokenURI private _tokenURIContract;
-    uint256 nextTop1000Id;
+    uint256 nextTop100Id;
+    uint256 nextTop3000Id;
 
     mapping(uint256 => Kitty) internal _kitties; 
  
     constructor() ERC721("CryptoKittiesTest", "CK-TEST")
     {
-        nextTop1000Id = 1;
+        nextTop100Id = 1;
+        nextTop3000Id = 101;
     }
 
     function setTokenURIContract(address tokenURIContract_) external onlyOwner {
@@ -114,62 +116,44 @@ contract KittyCoreTest is ERC721, Ownable2Step {
         genes = kit.genes;
     }
 
-    function minGen0GreaterThan1000(
-        address to_,
-        uint256 id_,
-        uint16 cooldownIndex_,
-        uint64 cooldownEndBlock_,
-        uint32 siringWithId_,
-        uint64 birthTime_,
-        uint256 genes_
-    )
-     external {
-        require(id_ > 1000, "invalid id");
-        _mintKitty(
-            to_,
-            id_,
-            cooldownIndex_,
-            cooldownEndBlock_,
-            siringWithId_,
-            birthTime_,
-            genes_
-            );
+    function mintGreaterThan3000(uint256 id_, uint16 generation_) external {
+        require(id_ > 3000, "invalid id");
+        _mintKitty(msg.sender, id_, generation_);
     }
 
-    function mintTop1000() external {
-        require(nextTop1000Id <= 1000, "Top 1000 mint out");
+    function mintTop100() external {
+        require(nextTop100Id <= 100, "Top100 mint out");
 
         address to_ = msg.sender;
-        uint256 id_ = nextTop1000Id;
-        nextTop1000Id++;
+        uint256 id_ = nextTop100Id;
+        nextTop100Id++;
 
-        bytes32 genes = keccak256(abi.encode(block.number));
-         _mintKitty(
-            to_,
-            id_,
-            0,
-            0,
-            0,
-            uint64(block.timestamp),
-            uint256(genes)
-            );
+         _mintKitty(to_, id_, 0);
+    }
+
+    function mintTop3000() external {
+        require(nextTop3000Id <= 3000, "Top 3000 mint out");
+
+        address to_ = msg.sender;
+        uint256 id_ = nextTop3000Id;
+        nextTop3000Id++;
+
+         _mintKitty(to_, id_, 0);
     }
 
     function _mintKitty(
         address to_, 
         uint256 id_,
-        uint16 cooldownIndex_,
-        uint64 cooldownEndBlock_,
-        uint32 siringWithId_,
-        uint64 birthTime_,
-        uint256 genes_
+        uint16 generation
         ) internal {
         super._mint(to_, id_);
+
          Kitty storage kit = _kitties[id_];
-         kit.cooldownIndex = cooldownIndex_;
-         kit.cooldownEndBlock = cooldownEndBlock_;
-         kit.siringWithId = siringWithId_;
-         kit.birthTime = birthTime_;
-         kit.genes = genes_;
+         kit.generation = generation;
+         kit.cooldownIndex = uint16(block.number % 14);
+         kit.cooldownEndBlock = 0;
+         kit.siringWithId = 0;
+         kit.birthTime = uint64(block.timestamp);
+         kit.genes = uint256(keccak256(abi.encode(block.number)));
     }
 }
