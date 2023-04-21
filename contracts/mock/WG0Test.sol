@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
 // Code source : https://etherscan.io/address/0xa10740ff9ff6852eac84cdcff9184e1d6d27c057#code
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -19,8 +20,7 @@ import "../IKittyCore.sol";
 ///  their own WG0 tokens to the contract and withdraw the kitty that you originally deposited. WG0 tokens have
 ///  no information about which kitty was originally deposited to mint WG0 - this is due to the very nature of 
 ///  the ERC20 standard being fungible, and the ERC721 standard being nonfungible.
-contract WrappedG0 is ERC20, ReentrancyGuard {
-
+contract WG0Test is ERC20, ReentrancyGuard {
 
 
     /* ****** */
@@ -69,7 +69,7 @@ contract WrappedG0 is ERC20, ReentrancyGuard {
 
     /// @notice The owner is not capable of changing the address of the CryptoKitties Core
     ///  contract once the contract has been deployed.
-    constructor(address kittyCore_) ERC20("Wrapped Gen 0", "WG0") {
+    constructor(address kittyCore_) ERC20("Wrapped Gen0", "WG0") {
         kittyCore = IKittyCore(kittyCore_);
     }
 

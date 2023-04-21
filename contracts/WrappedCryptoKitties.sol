@@ -7,6 +7,12 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./IKittyCore.sol";
 import "./ITokenURI.sol";
 
+/**
+ * @title Wrapped CryptoKitties
+ * @dev Wrapped  CryptoKitties NFT is 1:1 backed by orignal CryptoKitties NFT. Stake one orignal NFT
+ * to Wrapped contract, you will get one Wrapped NFT with the same ID. Burn one Wrapped NFT, you will
+ * get back your original NFT with the same ID.
+ */
 contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         
     ITokenURI private _tokenURIContract;
@@ -37,19 +43,19 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
     }
 
     // EIP-2981
-    function royaltyInfo(uint256, uint256 _salePrice) external view returns (
-        address receiver_,
-        uint256 royaltyAmount_){
+    function royaltyInfo(uint256, uint256 salePrice) external view returns (
+        address receiver,
+        uint256 royaltyAmount){
 
-        receiver_ = royaltyReceiver;
-        royaltyAmount_ = _salePrice * royaltyFee / 1000;                   
+        receiver = royaltyReceiver;
+        royaltyAmount = salePrice * royaltyFee / 1000;                   
     }
 
     function updateRoyaltyInfo(address receiver_, uint256 royaltyFee_) external onlyOwner {
         royaltyReceiver = receiver_;
         royaltyFee = royaltyFee_;
     }
-          
+
     /**
      * @dev See {IERC165-supportsInterface}.
      */
@@ -66,16 +72,16 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         _unwrap(kittyId);
     }
 
-    function batchWrap(uint256[] calldata kittyIds_) external nonReentrant {        
-        for(uint i = 0; i < kittyIds_.length; i++){
-            uint256 kittyId = kittyIds_[i];
+    function batchWrap(uint256[] calldata kittyIds) external nonReentrant {        
+        for(uint i = 0; i < kittyIds.length; i++){
+            uint256 kittyId = kittyIds[i];
             _wrap(kittyId);
         }
     }
 
-    function batchUnWrap(uint256[] calldata kittyIds_) external nonReentrant {        
-        for(uint i = 0; i < kittyIds_.length; i++){
-            uint256 kittyId = kittyIds_[i];
+    function batchUnWrap(uint256[] calldata kittyIds) external nonReentrant {        
+        for(uint i = 0; i < kittyIds.length; i++){
+            uint256 kittyId = kittyIds[i];
             _unwrap(kittyId);
         }
     }
