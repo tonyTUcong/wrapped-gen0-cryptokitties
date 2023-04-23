@@ -9,6 +9,7 @@ import "./ITokenURI.sol";
 
 /**
  * @title Wrapped CryptoKitties
+ * @author FIRST 721 CLUB
  * @dev Wrapped  CryptoKitties NFT is 1:1 backed by orignal CryptoKitties NFT. Stake one orignal NFT
  * to Wrapped contract, you will get one Wrapped NFT with the same ID. Burn one Wrapped NFT, you will
  * get back your original NFT with the same ID.
@@ -48,7 +49,7 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         uint256 royaltyAmount){
 
         receiver = royaltyReceiver;
-        royaltyAmount = salePrice * royaltyFee / 1000;                   
+        royaltyAmount = salePrice * royaltyFee / 1000;
     }
 
     function updateRoyaltyInfo(address receiver_, uint256 royaltyFee_) external onlyOwner {
@@ -64,22 +65,22 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         return interfaceId == _INTERFACE_ID_ERC2981 || super.supportsInterface(interfaceId);
     }
 
-    function wrap(uint256  kittyId) external nonReentrant {        
+    function wrap(uint256  kittyId) external nonReentrant {
         _wrap(kittyId);
     }
 
-    function unwrap(uint256  kittyId) external nonReentrant {        
+    function unwrap(uint256  kittyId) external nonReentrant {
         _unwrap(kittyId);
     }
 
-    function batchWrap(uint256[] calldata kittyIds) external nonReentrant {        
+    function batchWrap(uint256[] calldata kittyIds) external nonReentrant {
         for(uint i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
             _wrap(kittyId);
         }
     }
 
-    function batchUnWrap(uint256[] calldata kittyIds) external nonReentrant {        
+    function batchUnWrap(uint256[] calldata kittyIds) external nonReentrant {
         for(uint i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
             _unwrap(kittyId);
@@ -87,12 +88,12 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
     }
 
     function _unwrap(uint256 kittyId)  internal {
-        require(msg.sender == ownerOf(kittyId),"not owner");                
+        require(msg.sender == ownerOf(kittyId),"not owner");
         kittyCore.transfer(msg.sender, kittyId);
         _burn(kittyId);
     }
 
-    function _wrap(uint256  kittyId) internal{        
+    function _wrap(uint256  kittyId) internal {        
         require(msg.sender == kittyCore.ownerOf(kittyId), 'not owner');
         require(kittyCore.kittyIndexToApproved(kittyId) == address(this), 'not approve');
         _check(kittyId);

@@ -7,6 +7,7 @@ import "./IWG0.sol";
 
 /**
  * @title Wrapped Gen0 CryptoKitties
+ * @author FIRST 721 CLUB
  * @dev Wrapped Gen0 CryptoKitties NFT is 1:1 backed by orignal Gen0 CryptoKitties NFT. Stake 
  * one orignal Gen0 NFT to Wrapped Gen0 contract, you will get one Wrapped Gen0 NFT with the
  * same ID. Burn one Wrapped Gen0 NFT, you will get back your original Gen0 NFT with the same ID.
