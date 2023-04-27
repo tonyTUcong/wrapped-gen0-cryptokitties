@@ -80,7 +80,7 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         }
     }
 
-    function batchUnWrap(uint256[] calldata kittyIds) external nonReentrant {
+    function batchUnwrap(uint256[] calldata kittyIds) external nonReentrant {
         for(uint i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
             _unwrap(kittyId);

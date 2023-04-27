@@ -24,7 +24,7 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
 
     function _check(uint256 kittyId) internal view override {
          (,,,,,,,,uint256 generation,) = kittyCore.getKitty(kittyId);
-         require(generation == 0, 'this kitty must be Gen0');
+         require(generation == 0, 'kitty must be Gen0');
     }
 
     function swapFromWG0ToNft(uint256[] calldata kittyIds) external nonReentrant {
@@ -34,8 +34,6 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
         address[] memory addressArray = new  address[](count);
 
         for(uint256 i = 0; i < kittyIds.length; i++){
-            uint256 kittyId = kittyIds[i];
-            require(WG0Contract == kittyCore.ownerOf(kittyId), "invalid kittyId");
             addressArray[i] = address(this);
         }
         
