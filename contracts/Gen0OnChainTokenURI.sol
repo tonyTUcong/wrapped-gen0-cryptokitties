@@ -43,7 +43,7 @@ contract Gen0OnChainTokenURI is ITokenURI {
                     encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name":"',
+                                '{"name":"W#',
                                 tokenId.toString(),
                                 '","background_color":"ffffff","image":"',
                                 getKittyImage(tokenId),
