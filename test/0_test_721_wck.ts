@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("Check WG0NFT", function () {
+describe("Check 721WCK", function () {
     let owner, userA, userB;
     let kittyCoreTest, wCKNFT;
     let tx, receipt;
@@ -72,18 +72,25 @@ describe("Check WG0NFT", function () {
             await kittyCoreTest.mintGreaterThan3000(id1, gen);
             await kittyCoreTest.approve(wCKNFT.address, id1);
 
-            await kittyCoreTest.mintGreaterThan3000(id2, gen);
-            await kittyCoreTest.approve(wCKNFT.address, id2);
+            
 
-            await wCKNFT.batchWrap([id1,id2]);
+            await wCKNFT.batchWrap([id1], owner.address);
 
             expect(await wCKNFT.ownerOf(id1)).equal(owner.address);
-            expect(await wCKNFT.ownerOf(id2)).equal(owner.address);
             expect(await kittyCoreTest.ownerOf(id1)).equal(wCKNFT.address);
+
+            await wCKNFT.batchUnwrap([id1], owner.address);
+            expect(await kittyCoreTest.ownerOf(id1)).equal(owner.address);
+
+
+            await kittyCoreTest.mintGreaterThan3000(id2, gen);
+            await kittyCoreTest.approve(wCKNFT.address, id2);
+            await wCKNFT.batchWrap([id2], userA.address);
+
+            expect(await wCKNFT.ownerOf(id2)).equal(userA.address);
             expect(await kittyCoreTest.ownerOf(id2)).equal(wCKNFT.address);
 
-            await wCKNFT.batchUnwrap([id1,id2]);
-            expect(await kittyCoreTest.ownerOf(id1)).equal(owner.address);
+            await wCKNFT.connect(userA).batchUnwrap([id2], owner.address);
             expect(await kittyCoreTest.ownerOf(id2)).equal(owner.address);
         });              
     });

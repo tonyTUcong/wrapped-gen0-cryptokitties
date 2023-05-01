@@ -15,35 +15,52 @@ import "./ITokenURI.sol";
  * get back your original NFT with the same ID.
  */
 contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
-        
+
+    // The tokenURI contract address    
     ITokenURI private _tokenURIContract;
 
+    // The original CryptoKitties contract address
     IKittyCore public kittyCore;
 
+    // The royalty receiver address
     address royaltyReceiver;
 
     // royalty fee = price * royaltyFee / 1000
     uint256 royaltyFee;
 
  
+    /**
+     * @dev Initializes the contract by setting `kittyCore` , `name` and `symbol`.
+     */
     constructor(address kittyCore_, string memory name_, string memory symbol_) ERC721(name_, symbol_)
     {
         kittyCore = IKittyCore(kittyCore_);
     }
 
+    /**
+     * @dev Set the tokenURI contract address
+     */
     function setTokenURIContract(address tokenURIContract_) external onlyOwner {
         _tokenURIContract = ITokenURI(tokenURIContract_);
     }
 
+    /**
+     * @dev Returns tokenURI contract address
+     */
     function getTokenURIContract() external view returns(address) {
         return address(_tokenURIContract);
     }
 
+    /**
+     * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
+     */
     function tokenURI(uint256 tokenId) override public view returns (string memory) {
         return _tokenURIContract.tokenURI(tokenId);
     }
 
-    // EIP-2981
+    /**
+     * @dev See https://eips.ethereum.org/EIPS/eip-2981
+     */
     function royaltyInfo(uint256, uint256 salePrice) external view returns (
         address receiver,
         uint256 royaltyAmount){
@@ -52,6 +69,9 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         royaltyAmount = salePrice * royaltyFee / 1000;
     }
 
+    /**
+     * @dev Set params for EIP-2981
+     */
     function updateRoyaltyInfo(address receiver_, uint256 royaltyFee_) external onlyOwner {
         royaltyReceiver = receiver_;
         royaltyFee = royaltyFee_;
@@ -65,41 +85,86 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
         return interfaceId == _INTERFACE_ID_ERC2981 || super.supportsInterface(interfaceId);
     }
 
+    /**
+     * @dev Wrap an orignal kitty to a wrapped kitty
+     *
+     * Requirements:
+     *
+     * - `kittyId` must exist and be owned by the caller.
+     */
     function wrap(uint256  kittyId) external nonReentrant {
-        _wrap(kittyId);
+        _wrap(kittyId, msg.sender);
     }
 
+    /**
+     * @dev Unwrap a wrapped kitty to an orignal kitty
+     *
+     * Requirements:
+     *
+     * - `kittyId` must exist and be owned by the caller.
+     */
     function unwrap(uint256  kittyId) external nonReentrant {
-        _unwrap(kittyId);
+        _unwrap(kittyId, msg.sender);
     }
 
-    function batchWrap(uint256[] calldata kittyIds) external nonReentrant {
+    /**
+     * @dev Batch wrap orignal kitties to wrapped kitties
+     *
+     * Requirements:
+     *
+     * - `kittyIds` must exist and be owned by the caller.
+     */
+    function batchWrap(uint256[] calldata kittyIds, address receiver) external nonReentrant {
         for(uint i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
-            _wrap(kittyId);
+            _wrap(kittyId, receiver);
         }
     }
 
-    function batchUnwrap(uint256[] calldata kittyIds) external nonReentrant {
+    /**
+     * @dev Batch unwrap  wrapped kitties to orignal kitties
+     *
+     * Requirements:
+     *
+     * - `kittyIds` must exist and be owned by the caller.
+     */
+    function batchUnwrap(uint256[] calldata kittyIds, address receiver) external nonReentrant {
         for(uint i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
-            _unwrap(kittyId);
+            _unwrap(kittyId, receiver);
         }
     }
 
-    function _unwrap(uint256 kittyId)  internal {
-        require(msg.sender == ownerOf(kittyId),"not owner");
-        kittyCore.transfer(msg.sender, kittyId);
-        _burn(kittyId);
-    }
-
-    function _wrap(uint256  kittyId) internal {        
+    /**
+     * @dev Wrap an orignal kitty to a wrapped kitty
+     *
+     * Requirements:
+     *
+     * - `kittyId` must exist and be owned by the caller.
+     */
+    function _wrap(uint256  kittyId, address receiver) internal {        
         require(msg.sender == kittyCore.ownerOf(kittyId), 'not owner');
         require(kittyCore.kittyIndexToApproved(kittyId) == address(this), 'not approve');
         _check(kittyId);
         kittyCore.transferFrom(msg.sender, address(this), kittyId);
-        _mint(msg.sender, kittyId);
+        _mint(receiver, kittyId);
     }
 
+    /**
+     * @dev Unwrap a wrapped kitty to an orignal kitty
+     *
+     * Requirements:
+     *
+     * - `kittyId` must exist and be owned by the caller.
+     */
+    function _unwrap(uint256 kittyId, address receiver)  internal {
+        require(msg.sender == ownerOf(kittyId),"not owner");
+        kittyCore.transfer(receiver, kittyId);
+        _burn(kittyId);
+    }
+
+    /**
+     * @dev check for some special kitties, such as Gen0 kitties
+     */
     function _check(uint256  kittyId)  internal view virtual {}
 }

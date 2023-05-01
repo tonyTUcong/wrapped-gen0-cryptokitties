@@ -129,4 +129,3 @@ contract Gen0OnChainTokenURI is ITokenURI {
         return result;
     }
 }
-

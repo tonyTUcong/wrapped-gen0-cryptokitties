@@ -15,19 +15,31 @@ import "./IWG0.sol";
 contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
     address public WG0Contract;
 
-    constructor(address kittyCore_, address WG0Contract_, string memory name_, string memory symbol_) 
-      WrappedCryptoKitties(kittyCore_, name_, symbol_)
+    /**
+     * @dev Initializes the contract by setting original CryptoKitties and ERC-20 WG0 contract addresses.
+     */
+    constructor(address kittyCore_, address WG0Contract_) 
+      WrappedCryptoKitties(kittyCore_, "Wrapped Gen0 CryptoKitties", "721WG0")
     {
         WG0Contract = WG0Contract_;
     }
 
-
+    /**
+     * @dev check the kitty is Gen0
+     */
     function _check(uint256 kittyId) internal view override {
          (,,,,,,,,uint256 generation,) = kittyCore.getKitty(kittyId);
          require(generation == 0, 'kitty must be Gen0');
     }
 
-    function swapFromWG0ToNft(uint256[] calldata kittyIds) external nonReentrant {
+    /**
+     * @dev Swap 721WG0 NFTs by ERC-20 WG0 tokens
+     *
+     * Requirements:
+     *
+     * - `kittyIds` must be owned by the caller.
+     */
+    function swapFromWG0ToNft(uint256[] calldata kittyIds, address receiver) external nonReentrant {
         uint256 count = kittyIds.length;
         require(count > 0,"invalid count");
         SafeERC20.safeTransferFrom(IERC20(WG0Contract), msg.sender, address(this), count * 1e18);
@@ -43,11 +55,18 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
             uint256 kittyId = kittyIds[i];
             require(address(this) == kittyCore.ownerOf(kittyId), "invalid kittyId");
             _check(kittyId);
-            _mint(msg.sender, kittyId);
+            _mint(receiver, kittyId);
         }
     }
 
-    function swapFromNftToWG0(uint256[] calldata kittyIds) external nonReentrant {
+    /**
+     * @dev Swap ERC-20 WG0 tokens by 721WG0 NFTs
+     *
+     * Requirements:
+     *
+     * - `kittyIds` must be owned by the caller.
+     */
+    function swapFromNftToWG0(uint256[] calldata kittyIds, address receiver) external nonReentrant {
         uint256 count = kittyIds.length;
         require(count > 0,"invalid count");
 
@@ -59,6 +78,6 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
         }
         
         IWG0(WG0Contract).depositKittiesAndMintTokens(kittyIds);
-        SafeERC20.safeTransfer(IERC20(WG0Contract), msg.sender, count * 1e18);
+        SafeERC20.safeTransfer(IERC20(WG0Contract), receiver, count * 1e18);
     }
 }
