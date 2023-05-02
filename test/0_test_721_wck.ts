@@ -20,7 +20,7 @@ describe("Check 721WCK", function () {
         it("success wrap &  unwrap", async function () {
             const id =  3001;
             const gen = 1;
-            await kittyCoreTest.mintGreaterThan3000(id, gen);
+            await kittyCoreTest.mintGreaterThan3000(id, gen,true);
             expect(await kittyCoreTest.ownerOf(id)).equal(owner.address);
     
             await kittyCoreTest.approve(wCKNFT.address, id);
@@ -42,8 +42,8 @@ describe("Check 721WCK", function () {
             const id1 =  3002;
             const id2 =  3003;
             const gen = 1;
-            await kittyCoreTest.mintGreaterThan3000(id1, gen);
-            await kittyCoreTest.connect(userA).mintGreaterThan3000(id2, gen);
+            await kittyCoreTest.mintGreaterThan3000(id1, gen,true);
+            await kittyCoreTest.connect(userA).mintGreaterThan3000(id2, gen,true);
             expect(await kittyCoreTest.ownerOf(id1)).equal(owner.address);
             expect(await kittyCoreTest.ownerOf(id2)).equal(userA.address);
     
@@ -69,7 +69,7 @@ describe("Check 721WCK", function () {
             const id1 =  3001;
             const id2 =  3002;
             const gen = 1;
-            await kittyCoreTest.mintGreaterThan3000(id1, gen);
+            await kittyCoreTest.mintGreaterThan3000(id1, gen,true);
             await kittyCoreTest.approve(wCKNFT.address, id1);
 
             
@@ -83,7 +83,7 @@ describe("Check 721WCK", function () {
             expect(await kittyCoreTest.ownerOf(id1)).equal(owner.address);
 
 
-            await kittyCoreTest.mintGreaterThan3000(id2, gen);
+            await kittyCoreTest.mintGreaterThan3000(id2, gen,true);
             await kittyCoreTest.approve(wCKNFT.address, id2);
             await wCKNFT.batchWrap([id2], userA.address);
 

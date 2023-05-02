@@ -18,8 +18,8 @@ describe("Test Gen0OnChainTokenURI", function () {
         it("getKittyImage", async function () {
             const id1 =  3001;
             const id2 =  3002;
-            await kittyCoreTest.mintGreaterThan3000(id1, 0);
-            await kittyCoreTest.mintGreaterThan3000(id2, 0);
+            await kittyCoreTest.mintGreaterThan3000(id1, 0,true);
+            await kittyCoreTest.mintGreaterThan3000(id2, 0,false);
     
 
             expect(await onChainTokenURI.getKittyImage(id1)).equal("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/3001.png");

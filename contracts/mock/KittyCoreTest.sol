@@ -116,9 +116,9 @@ contract KittyCoreTest is ERC721, Ownable2Step {
         genes = kit.genes;
     }
 
-    function mintGreaterThan3000(uint256 id_, uint16 generation_) external {
+    function mintGreaterThan3000(uint256 id_, uint16 generation_, bool isVirgin_) external {
         require(id_ > 3000, "invalid id");
-        _mintKitty(msg.sender, id_, generation_);
+        _mintKitty2(msg.sender, id_, generation_, isVirgin_);
     }
 
     function mintTop100() external {
@@ -152,6 +152,24 @@ contract KittyCoreTest is ERC721, Ownable2Step {
          kit.generation = generation;
          kit.cooldownIndex = uint16(block.number % 14);
          kit.cooldownEndBlock = 0;
+         kit.siringWithId = 0;
+         kit.birthTime = uint64(block.timestamp);
+         kit.genes = uint256(keccak256(abi.encode(block.number)));
+    }
+
+
+    function _mintKitty2(
+        address to_, 
+        uint256 id_,
+        uint16 generation_,
+        bool isVirgin_
+        ) internal {
+        super._mint(to_, id_);
+
+         Kitty storage kit = _kitties[id_];
+         kit.generation = generation_;         
+         kit.cooldownIndex = isVirgin_ ? 0 : uint16(block.number % 13) + 1;
+         kit.cooldownEndBlock = isVirgin_ ?  0 : uint64(block.number); 
          kit.siringWithId = 0;
          kit.birthTime = uint64(block.timestamp);
          kit.genes = uint256(keccak256(abi.encode(block.number)));
