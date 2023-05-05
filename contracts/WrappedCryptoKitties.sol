@@ -145,7 +145,7 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
     function _wrap(uint256  kittyId, address receiver) internal {        
         require(msg.sender == kittyCore.ownerOf(kittyId), 'not owner');
         require(kittyCore.kittyIndexToApproved(kittyId) == address(this), 'not approve');
-        _check(kittyId);
+        _checkBeforeMint(kittyId);
         kittyCore.transferFrom(msg.sender, address(this), kittyId);
         _mint(receiver, kittyId);
     }
@@ -166,5 +166,5 @@ contract WrappedCryptoKitties is ERC721, Ownable2Step, ReentrancyGuard {
     /**
      * @dev check for some special kitties, such as Gen0 kitties
      */
-    function _check(uint256  kittyId)  internal view virtual {}
+    function _checkBeforeMint(uint256  kittyId)  internal view virtual {}
 }

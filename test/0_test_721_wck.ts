@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("Check 721WCK", function () {
-    let owner, userA, userB;
+describe("Test 721WCK", function () {
+    let owner, userA;
     let kittyCoreTest, wCKNFT;
     let tx, receipt;
 
     beforeEach(async function () {
-        [owner,userA, userB] = await ethers.getSigners();
+        [owner,userA] = await ethers.getSigners();
         const KittyCoreTest = await ethers.getContractFactory("KittyCoreTest");
         const WrappedCryptoKitties = await ethers.getContractFactory("WrappedCryptoKitties");
         

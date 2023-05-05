@@ -32,7 +32,7 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
     /**
      * @dev check the kitty is Gen0
      */
-    function _check(uint256 kittyId) internal view override {
+    function _checkBeforeMint(uint256 kittyId) internal view override {
          (,,,,,,,,uint256 generation,) = kittyCore.getKitty(kittyId);
          require(generation == 0, 'kitty must be Gen0');
     }
@@ -107,7 +107,7 @@ contract WrappedGen0CryptoKitties is  WrappedCryptoKitties {
         for(uint256 i = 0; i < kittyIds.length; i++){
             uint256 kittyId = kittyIds[i];
             require(address(this) == kittyCore.ownerOf(kittyId), "invalid kittyId");
-            _check(kittyId);
+            _checkBeforeMint(kittyId);
             _mint(receiver, kittyId);
         }
     }

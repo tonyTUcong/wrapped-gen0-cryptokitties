@@ -3,11 +3,11 @@ import {  ethers } from "hardhat";
 import { BigNumber } from "ethers";
 
 describe("Test 721WG0", function () {
-    let owner, userA, userB;
+    let owner, userA;
     let kittyCoreTest, wG0Test, wG0NFT,wVG0Test;
 
     beforeEach(async function () {
-        [owner,userA, userB] = await ethers.getSigners();
+        [owner,userA] = await ethers.getSigners();
         const KittyCoreTest = await ethers.getContractFactory("KittyCoreTest");
         const WG0Test = await ethers.getContractFactory("WG0Test");
         const WVG0Test = await ethers.getContractFactory("WVG0Test");
